@@ -83,6 +83,26 @@ body {
   font-size: 0.75rem;
   color: rgba(250,246,241,.45);
   letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color .15s;
+  user-select: none;
+  position: relative;
+}
+.header-date:hover { color: rgba(250,246,241,.8); }
+.header-date svg { opacity: .5; flex-shrink: 0; }
+.header-date:hover svg { opacity: 1; }
+#headerDatePicker {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color-scheme: dark;
 }
 
 /* ── Toolbar ────────────────────────────────────────────────────────────── */
@@ -360,7 +380,11 @@ tbody td {
     <div class="header-sub">Outreach CRM</div>
   </div>
   <div class="header-right">
-    <span class="header-date" id="headerDate"></span>
+    <span class="header-date" id="headerDate" title="Click to change date">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span id="headerDateText"></span>
+      <input type="date" id="headerDatePicker" aria-label="Change session date">
+    </span>
   </div>
 </header>
 
@@ -606,9 +630,30 @@ function render(focusLast = false) {
 loadState();
 render();
 
-// Today's date in header
-document.getElementById('headerDate').textContent =
-  new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+// Header date — click to change, persisted in localStorage
+const DATE_KEY = 'bruskin_crm_date';
+const picker   = document.getElementById('headerDatePicker');
+const dateText = document.getElementById('headerDateText');
+
+function toISO(d) {
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+function formatDisplay(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+function setHeaderDate(iso) {
+  dateText.textContent = formatDisplay(iso);
+  picker.value = iso;
+  localStorage.setItem(DATE_KEY, iso);
+}
+
+const savedDate = localStorage.getItem(DATE_KEY) || toISO(new Date());
+setHeaderDate(savedDate);
+
+picker.addEventListener('change', () => {
+  if (picker.value) setHeaderDate(picker.value);
+});
 
 // Controls
 document.getElementById('addRowBtn').addEventListener('click', () => addRow());
