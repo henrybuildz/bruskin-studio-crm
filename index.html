@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruskin Studio CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --burg-xdark:  #1E0610;
+  --burg-dark:   #3A0E20;
+  --burg:        #5C1A2E;
+  --burg-mid:    #7A2641;
+  --burg-light:  #9A3555;
+  --gold:        #C4974A;
+  --gold-light:  #D4AA6A;
+  --gold-pale:   #EED9AF;
+  --cream:       #FAF6F1;
+  --cream-2:     #F3EBE0;
+  --cream-3:     #E9DDD0;
+  --white:       #FFFFFF;
+  --text:        #1E0A12;
+  --text-mid:    #5A3A44;
+  --text-muted:  #9A7A84;
+  --border:      #E0D0C8;
+  --border-dark: #CCB8B0;
+  --shadow-sm:   0 1px 4px rgba(30,6,16,.06);
+  --shadow-md:   0 4px 16px rgba(30,6,16,.10);
+  --r:           8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream-2);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── App Header ─────────────────────────────────────────────────────────── */
+.app-header {
+  background: var(--burg-xdark);
+  padding: 18px 32px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 2px solid var(--gold);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-brand {}
+.header-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.025em;
+}
+.header-sub {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--gold-light);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-date {
+  font-size: 0.75rem;
+  color: rgba(250,246,241,.45);
+  letter-spacing: 0.04em;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────────── */
+.toolbar {
+  background: var(--burg-dark);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 160px;
+  max-width: 340px;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: .5;
+}
+.search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 34px;
+  background: rgba(250,246,241,.08);
+  border: 1px solid rgba(250,246,241,.14);
+  border-radius: var(--r);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: var(--cream);
+  outline: none;
+  transition: border-color .18s, background .18s;
+}
+.search-input::placeholder { color: rgba(250,246,241,.38); }
+.search-input:focus {
+  border-color: var(--gold);
+  background: rgba(250,246,241,.12);
+  box-shadow: 0 0 0 3px rgba(196,151,74,.18);
+}
+
+.row-count {
+  font-size: 0.72rem;
+  color: rgba(250,246,241,.42);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.btn-add {
+  height: 36px;
+  padding: 0 18px;
+  background: var(--gold);
+  color: var(--burg-xdark);
+  border: none;
+  border-radius: var(--r);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background .18s, transform .1s, box-shadow .18s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn-add:hover { background: var(--gold-light); box-shadow: 0 2px 8px rgba(196,151,74,.35); }
+.btn-add:active { transform: scale(.97); }
+
+/* ── Main Content ───────────────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  padding: 24px 32px 40px;
+  overflow-x: auto;
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+.table-container {
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Header */
+thead th {
+  background: var(--burg-xdark);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 13px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--gold);
+  position: sticky;
+  top: 57px;
+  z-index: 10;
+}
+thead th:last-child { width: 44px; }
+
+/* Rows */
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:nth-child(even) { background: var(--cream); }
+tbody tr:hover { background: rgba(92,26,46,.042); }
+
+tbody td {
+  padding: 9px 14px;
+  vertical-align: middle;
+  font-size: 0.85rem;
+}
+
+/* Cell inputs */
+.cell-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  min-width: 0;
+}
+.cell-input:hover { border-color: var(--border-dark); background: var(--cream); }
+.cell-input:focus {
+  border-color: var(--gold);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(196,151,74,.14);
+}
+.cell-input[data-f="time"]  { width: 62px; min-width: 0; text-align: center; font-weight: 500; color: var(--text-mid); }
+.cell-input[data-f="phone"] { width: 130px; min-width: 0; }
+.cell-input[data-f="date"]  { width: 105px; min-width: 0; }
+.cell-input[data-f="name"]  { min-width: 140px; font-weight: 500; }
+.cell-input[data-f="notes"] { min-width: 180px; }
+
+/* Dropdowns */
+.cell-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 4px 26px 4px 9px;
+  border-radius: 20px;
+  border: 1px solid currentColor;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  background-size: 11px;
+  transition: box-shadow .15s, opacity .15s;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.cell-select:focus { box-shadow: 0 0 0 3px rgba(196,151,74,.22); }
+.cell-select:hover { opacity: .88; }
+
+/* Call Status palettes */
+.cs-Pending        { background: #FEF3C7; color: #78350F; border-color: #FCD34D !important; }
+.cs-Interested     { background: #D1FAE5; color: #065F46; border-color: #6EE7B7 !important; }
+.cs-Not-interested { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5 !important; }
+.cs-No-answer      { background: #E0E7FF; color: #3730A3; border-color: #A5B4FC !important; }
+.cs-Callback       { background: #FEF9C3; color: #713F12; border-color: #FDE047 !important; }
+
+/* Website Status palettes */
+.ws-No-website  { background: #FCE7F3; color: #831843; border-color: #F9A8D4 !important; }
+.ws-Bad-website { background: #FFEDD5; color: #7C2D12; border-color: #FDBA74 !important; }
+.ws-Has-website { background: #ECFDF5; color: #065F46; border-color: #6EE7B7 !important; }
+
+/* Delete button */
+.btn-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  margin: 0 auto;
+}
+.btn-del:hover { color: #DC2626; background: #FEE2E2; }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 72px 24px;
+}
+.empty-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--cream-3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: var(--burg-light);
+}
+.empty-state h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--burg);
+  margin-bottom: 6px;
+}
+.empty-state p { font-size: 0.84rem; color: var(--text-muted); }
+
+/* Row enter animation */
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.row-new { animation: rowIn .22s ease; }
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-header { padding: 14px 18px; }
+  .toolbar    { padding: 8px 18px; }
+  .main       { padding: 16px 12px 32px; }
+  .header-date { display: none; }
+  .search-wrap { max-width: 100%; min-width: 100%; order: 3; }
+  .toolbar     { row-gap: 8px; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-2); }
+::-webkit-scrollbar-thumb { background: var(--burg-mid); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="header-logo">Bruskin Studio</div>
+    <div class="header-sub">Outreach CRM</div>
+  </div>
+  <div class="header-right">
+    <span class="header-date" id="headerDate"></span>
+  </div>
+</header>
+
+<!-- ── Toolbar ───────────────────────────────────────────────────────────── -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg class="search-icon" width="15" height="15" fill="none" stroke="#FAF6F1" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+    </svg>
+    <input class="search-input" type="search" id="searchInput" placeholder="Search by name or status…" aria-label="Search entries">
+  </div>
+  <span class="row-count" id="rowCount" aria-live="polite"></span>
+  <button class="btn-add" id="addRowBtn" aria-label="Add new row">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    Add Row
+  </button>
+</div>
+
+<!-- ── Main ──────────────────────────────────────────────────────────────── -->
+<main class="main">
+  <div class="table-container" id="tableContainer">
+    <table id="crmTable" role="table">
+      <thead>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Business Name</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Website Status</th>
+          <th scope="col">Call Status</th>
+          <th scope="col">Notes</th>
+          <th scope="col">Date</th>
+          <th scope="col" aria-label="Actions"></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none" aria-live="polite">
+      <div class="empty-icon" aria-hidden="true">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h3>No entries found</h3>
+      <p>Add a new row or clear your search filter.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">Bruskin Studio CRM &mdash; data saved locally in your browser</footer>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'bruskin_crm_v1';
+
+const CALL_OPTS    = ['Pending','Interested','Not interested','No answer','Callback'];
+const WEBSITE_OPTS = ['No website','Bad website','Has website'];
+
+const CS_CLASS = {
+  'Pending':       'cs-Pending',
+  'Interested':    'cs-Interested',
+  'Not interested':'cs-Not-interested',
+  'No answer':     'cs-No-answer',
+  'Callback':      'cs-Callback',
+};
+const WS_CLASS = {
+  'No website': 'ws-No-website',
+  'Bad website':'ws-Bad-website',
+  'Has website':'ws-Has-website',
+};
+
+const DEFAULT_ROWS = [
+  { id:1, time:'9:20',  name:'Vienna Backshop',              phone:'', websiteStatus:'No website', callStatus:'Pending', notes:'', date:'' },
+  { id:2, time:'11:15', name:'Moment Cafe and Restaurant',   phone:'', websiteStatus:'No website', callStatus:'Pending', notes:'', date:'' },
+  { id:3, time:'11:45', name:'Meat Point Burger and Bar',    phone:'', websiteStatus:'No website', callStatus:'Pending', notes:'', date:'' },
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let rows   = [];
+let nextId = 4;
+let query  = '';
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) {
+      const p = JSON.parse(s);
+      rows   = p.rows   || [...DEFAULT_ROWS];
+      nextId = p.nextId || rows.length + 1;
+      return;
+    }
+  } catch (_) {}
+  rows   = DEFAULT_ROWS.map(r => ({ ...r }));
+  nextId = 4;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ rows, nextId }));
+  } catch (_) {}
+}
+
+// ── CRUD ─────────────────────────────────────────────────────────────────────
+function addRow() {
+  const today = new Date().toLocaleDateString('en-GB');
+  rows.push({ id: nextId++, time:'', name:'', phone:'', websiteStatus:'No website', callStatus:'Pending', notes:'', date: today });
+  saveState();
+  render(true);
+}
+
+function deleteRow(id) {
+  const row = rows.find(r => r.id === id);
+  const label = row?.name || 'this entry';
+  if (!confirm(`Delete "${label}"?`)) return;
+  rows = rows.filter(r => r.id !== id);
+  saveState();
+  render();
+}
+
+function setField(id, field, value) {
+  const row = rows.find(r => r.id === id);
+  if (row) { row[field] = value; saveState(); }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function filtered() {
+  if (!query) return rows;
+  const q = query.toLowerCase();
+  return rows.filter(r =>
+    r.name.toLowerCase().includes(q)         ||
+    r.callStatus.toLowerCase().includes(q)   ||
+    r.websiteStatus.toLowerCase().includes(q)||
+    (r.notes||'').toLowerCase().includes(q)
+  );
+}
+
+function makeInput(id, field, value) {
+  const el = document.createElement('input');
+  el.type       = field === 'phone' ? 'tel' : 'text';
+  el.className  = 'cell-input';
+  el.value      = value ?? '';
+  el.dataset.f  = field;
+  el.setAttribute('aria-label', field);
+  if (field === 'phone') el.setAttribute('autocomplete','tel');
+  el.addEventListener('change', () => setField(id, field, el.value));
+  el.addEventListener('blur',   () => setField(id, field, el.value));
+  return el;
+}
+
+function makeSelect(id, field, opts, classMap, current) {
+  const sel = document.createElement('select');
+  sel.className = 'cell-select';
+  sel.setAttribute('aria-label', field);
+
+  opts.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = o.textContent = opt;
+    if (opt === current) o.selected = true;
+    sel.appendChild(o);
+  });
+
+  function applyColor() {
+    Object.values(classMap).forEach(c => sel.classList.remove(c));
+    const c = classMap[sel.value];
+    if (c) sel.classList.add(c);
+    // Tint the dropdown arrow to match
+    const encoded = encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>`
+    );
+    sel.style.backgroundImage = `url("data:image/svg+xml,${encoded}")`;
+  }
+
+  sel.addEventListener('change', () => {
+    setField(id, field, sel.value);
+    applyColor();
+  });
+
+  applyColor();
+  return sel;
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(focusLast = false) {
+  const tbody  = document.getElementById('tableBody');
+  const empty  = document.getElementById('emptyState');
+  const table  = document.getElementById('crmTable');
+  const count  = document.getElementById('rowCount');
+  const vis    = filtered();
+
+  count.textContent = `${vis.length} entr${vis.length === 1 ? 'y' : 'ies'}`;
+
+  if (vis.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = '';
+    return;
+  }
+  table.style.display = '';
+  empty.style.display = 'none';
+
+  // Build rows as fragment to minimise reflow
+  const frag = document.createDocumentFragment();
+
+  vis.forEach((row, idx) => {
+    const tr = document.createElement('tr');
+    if (focusLast && idx === vis.length - 1) tr.classList.add('row-new');
+
+    const cells = [
+      makeInput (row.id, 'time',          row.time),
+      makeInput (row.id, 'name',          row.name),
+      makeInput (row.id, 'phone',         row.phone),
+      makeSelect(row.id, 'websiteStatus', WEBSITE_OPTS, WS_CLASS, row.websiteStatus),
+      makeSelect(row.id, 'callStatus',    CALL_OPTS,    CS_CLASS, row.callStatus),
+      makeInput (row.id, 'notes',         row.notes),
+      makeInput (row.id, 'date',          row.date),
+    ];
+
+    cells.forEach(c => {
+      const td = document.createElement('td');
+      td.appendChild(c);
+      tr.appendChild(td);
+    });
+
+    // Delete button
+    const tdDel = document.createElement('td');
+    const btn   = document.createElement('button');
+    btn.className   = 'btn-del';
+    btn.title       = 'Delete row';
+    btn.setAttribute('aria-label', 'Delete row');
+    btn.innerHTML   = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>`;
+    btn.addEventListener('click', () => deleteRow(row.id));
+    tdDel.appendChild(btn);
+    tr.appendChild(tdDel);
+
+    frag.appendChild(tr);
+  });
+
+  tbody.replaceChildren(frag);
+
+  if (focusLast) {
+    const lastRow  = tbody.lastElementChild;
+    const firstInp = lastRow?.querySelector('.cell-input');
+    if (firstInp) { requestAnimationFrame(() => firstInp.focus()); }
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+loadState();
+render();
+
+// Today's date in header
+document.getElementById('headerDate').textContent =
+  new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+// Controls
+document.getElementById('addRowBtn').addEventListener('click', () => addRow());
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  query = e.target.value.trim();
+  render();
+});
+</script>
+</body>
+</html>
